@@ -31,9 +31,23 @@ public class Convert {
 
             // get user input for which fields to display
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Which fields do you want to see? (comma-separated list, e.g. name, country)");
-            String fieldString = scanner.nextLine();
-            String[] fields = fieldString.split(",");
+            String fieldString = "";
+            String[] fields = new String[0];
+
+            while (fields.length == 0) {
+                System.out.println("Which fields do you want to see? (comma-separated list, e.g. name, country)");
+                fieldString = scanner.nextLine();
+                fields = fieldString.split(",");
+
+                // check if any of the requested fields are missing from the XML file
+                for (String field : fields) {
+                    if (doc.getElementsByTagName(field.trim()).getLength() == 0) {
+                        System.out.println("The field '" + field.trim() + "' does not exist in the XML file.");
+                        fields = new String[0];
+                        break;
+                    }
+                }
+            }
 
             // create a new JSON array to store the output
             JSONObject outputJson = new JSONObject();
