@@ -6,6 +6,7 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import java.util.Scanner;
 
 public class Convert {
 
@@ -23,26 +24,22 @@ public class Convert {
             // extract the record elements
             NodeList nList = doc.getElementsByTagName("record");
 
-            // iterate over the record elements and print the field values for each
+            // get user input for which fields to display
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Which fields do you want to see? (comma-separated list, e.g. name, country)");
+            String fieldString = scanner.nextLine();
+            String[] fields = fieldString.split(",");
+
+            // iterate over the record elements and print the selected fields for each
             for (int i = 0; i < nList.getLength(); i++) {
                 Element recordElement = (Element) nList.item(i);
-
-                // extract the fields from the record element
-                String name = recordElement.getElementsByTagName("name").item(0).getTextContent();
-                String postalZip = recordElement.getElementsByTagName("postalZip").item(0).getTextContent();
-                String region = recordElement.getElementsByTagName("region").item(0).getTextContent();
-                String country = recordElement.getElementsByTagName("country").item(0).getTextContent();
-                String address = recordElement.getElementsByTagName("address").item(0).getTextContent();
-                String list = recordElement.getElementsByTagName("list").item(0).getTextContent();
-
-                // print the field values to the console
                 System.out.println("Record " + (i+1) + ":");
-                System.out.println("Name: " + name);
-                System.out.println("Postal Zip: " + postalZip);
-                System.out.println("Region: " + region);
-                System.out.println("Country: " + country);
-                System.out.println("Address: " + address);
-                System.out.println("List: " + list);
+
+                // extract and print the selected fields from the record element
+                for (String field : fields) {
+                    String fieldValue = recordElement.getElementsByTagName(field.trim()).item(0).getTextContent();
+                    System.out.println(field.trim() + ": " + fieldValue);
+                }
                 System.out.println();
             }
 
@@ -51,3 +48,4 @@ public class Convert {
         }
     }
 }
+
