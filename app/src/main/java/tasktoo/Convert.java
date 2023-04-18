@@ -3,10 +3,15 @@ package tasktoo;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import java.util.Scanner;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 public class Convert {
 
@@ -30,22 +35,31 @@ public class Convert {
             String fieldString = scanner.nextLine();
             String[] fields = fieldString.split(",");
 
-            // iterate over the record elements and print the selected fields for each
+            // create a new JSON array to store the output
+            JSONObject outputJson = new JSONObject();
+
+            // iterate over the record elements and create JSON objects for the selected fields
             for (int i = 0; i < nList.getLength(); i++) {
                 Element recordElement = (Element) nList.item(i);
-                System.out.println("Record " + (i+1) + ":");
+                JSONObject recordObject = new JSONObject();
 
-                // extract and print the selected fields from the record element
+                // extract the selected fields and add them to the JSON object
                 for (String field : fields) {
                     String fieldValue = recordElement.getElementsByTagName(field.trim()).item(0).getTextContent();
-                    System.out.println(field.trim() + ": " + fieldValue);
+                    recordObject.put(field.trim(), fieldValue);
                 }
-                System.out.println();
+
+                // add the record object to the output array
+                outputJson.append("records", recordObject);
             }
+
+            // write the JSON output to a file in the resources directory
+            String outputString = outputJson.toString(2);
+            Path outputPath = Paths.get("src/main/resources/output.json");
+            Files.write(outputPath, outputString.getBytes());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
-
